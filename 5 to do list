@@ -1,0 +1,60 @@
+import 'package:flutter/material.dart';
+
+void main() => runApp(MaterialApp(home: ToDoApp(), debugShowCheckedModeBanner: false));
+
+class ToDoApp extends StatefulWidget {
+  @override
+  _ToDoAppState createState() => _ToDoAppState();
+}
+
+class _ToDoAppState extends State<ToDoApp> {
+  final _tasks = <String>[];
+  final _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _addTask() {
+    final text = _controller.text.trim();
+    if (text.isNotEmpty) {
+      setState(() {
+        _tasks.add(text);
+        _controller.clear();
+      });
+    }
+  }
+
+  void _removeTask(int index) => setState(() => _tasks.removeAt(index));
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('To-Do')),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Row(
+              children: [
+                Expanded(child: TextField(controller: _controller, decoration: InputDecoration(hintText: 'Enter task'))),
+                IconButton(icon: Icon(Icons.add), onPressed: _addTask),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _tasks.length,
+              itemBuilder: (_, i) => ListTile(
+                title: Text(_tasks[i]),
+                trailing: IconButton(icon: Icon(Icons.delete), onPressed: () => _removeTask(i)),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
