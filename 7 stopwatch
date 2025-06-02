@@ -1,0 +1,42 @@
+import 'dart:async';
+import 'package:flutter/material.dart';
+
+void main() => runApp(MaterialApp(home: StopwatchApp(), debugShowCheckedModeBanner: false));
+
+class StopwatchApp extends StatefulWidget {
+  @override State<StopwatchApp> createState() => _StopwatchAppState();
+}
+
+class _StopwatchAppState extends State<StopwatchApp> {
+  final sw = Stopwatch();
+  late Timer t = Timer.periodic(Duration(milliseconds: 100), (_) {
+    if (sw.isRunning) setState(() {});
+  });
+
+  String get time {
+    final ms = sw.elapsedMilliseconds;
+    final m = (ms ~/ 60000) % 60, s = (ms ~/ 1000) % 60, cs = (ms ~/ 10) % 100;
+    return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}:${cs.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  void dispose() { t.cancel(); super.dispose(); }
+
+  @override
+  Widget build(BuildContext c) => Scaffold(
+    appBar: AppBar(title: Text('Stopwatch')),
+    body: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(time, style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold)),
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          ElevatedButton(onPressed: sw.isRunning ? null : sw.start, child: Text('Start')),
+          SizedBox(width: 10),
+          ElevatedButton(onPressed: sw.isRunning ? sw.stop : null, child: Text('Stop')),
+          SizedBox(width: 10),
+          ElevatedButton(onPressed: () => setState(() => sw..reset()), child: Text('Reset')),
+        ]),
+      ],
+    ),
+  );
+}
