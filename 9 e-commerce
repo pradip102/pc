@@ -1,0 +1,44 @@
+import 'package:flutter/material.dart';
+
+void main() => runApp(const MaterialApp(home: Home()));
+
+class Home extends StatelessWidget {
+  const Home({super.key});
+  final products = const [
+    {'name': 'Shirt', 'price': '29.99'},
+    {'name': 'Shoes', 'price': '49.99'},
+    {'name': 'Hat', 'price': '15.99'},
+  ];
+
+  @override
+  Widget build(BuildContext c) => Scaffold(
+    appBar: AppBar(title: const Text('Shop')),
+    body: ListView(
+      children: products.map((p) => ListTile(
+        title: Text(p['name']!),
+        subtitle: Text('\$${p['price']}'),
+        trailing: ElevatedButton(
+          onPressed: () => ScaffoldMessenger.of(c).showSnackBar(
+            SnackBar(content: Text('${p['name']} added')),
+          ),
+          child: const Text('Add'),
+        ),
+        onTap: () => Navigator.push(c,
+          MaterialPageRoute(builder: (_) => Detail(product: p))),
+      )).toList(),
+    ),
+  );
+}
+
+class Detail extends StatelessWidget {
+  final Map<String, String> product;
+  const Detail({super.key, required this.product});
+
+  @override
+  Widget build(BuildContext c) => Scaffold(
+    appBar: AppBar(title: Text(product['name']!)),
+    body: Center(
+      child: Text('\$${product['price']}', style: const TextStyle(fontSize: 32)),
+    ),
+  );
+}
